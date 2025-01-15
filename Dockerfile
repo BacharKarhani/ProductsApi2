@@ -6,14 +6,24 @@ EXPOSE 80
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["ProductsApi.csproj", "./"]
-RUN dotnet restore "./ProductsApi.csproj"
+
+# Copy the .csproj file and restore any dependencies (via dotnet restore)
+COPY ["ProductsApi/ProductsApi.csproj", "ProductsApi/"]
+RUN dotnet restore "ProductsApi/ProductsApi.csproj"
+
+# Copy the rest of the code
 COPY . . 
-WORKDIR "/src/"
+
+# Publish the app to /app/publish directory in the container
+WORKDIR "/src/ProductsApi"
 RUN dotnet publish "ProductsApi.csproj" -c Release -o /app/publish
 
 # Final stage
 FROM base AS final
 WORKDIR /app
+
+# Copy the published files from the build stage
 COPY --from=build /app/publish . 
+
+# Set the entry point to the application
 ENTRYPOINT ["dotnet", "ProductsApi.dll"]
