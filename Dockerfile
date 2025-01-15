@@ -8,14 +8,14 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
 # Copy the .csproj file and restore any dependencies (via dotnet restore)
-COPY ["ProductsApi/ProductsApi.csproj", "ProductsApi/"]
-RUN dotnet restore "ProductsApi/ProductsApi.csproj"
+COPY ["ProductsApi2/ProductsApi/ProductsApi.csproj", "ProductsApi2/ProductsApi/"]
+RUN dotnet restore "ProductsApi2/ProductsApi/ProductsApi.csproj"
 
 # Copy the rest of the code
 COPY . . 
 
 # Publish the app to /app/publish directory in the container
-WORKDIR "/src/ProductsApi"
+WORKDIR "/src/ProductsApi2/ProductsApi"
 RUN dotnet publish "ProductsApi.csproj" -c Release -o /app/publish
 
 # Final stage
